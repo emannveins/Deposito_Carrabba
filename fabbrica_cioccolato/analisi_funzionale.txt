@@ -19,9 +19,16 @@ AGGIORNAMENTO CODICE
 - aggiunta getter e setter
 - modifiche varie sparse
 
-
 # COMMIT 3 
 
-AGGIUNTA CLASSE fabbrica
+AGGIUNTA CLASSE FABBRICA
 - costi aggiunti in ogni classe derivata
 - classe base modificata in abstract
+- modifiche varie
+
+# COMMIT 4
+
+-aggiunta classi astratte in Cioccolato
+-modifica classi astratte nelle classi derivate
+-aggiornamento costruttori di tutte le classi
+-rimossi println() di troppo

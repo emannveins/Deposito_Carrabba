@@ -3,20 +3,23 @@ public abstract class Cioccolato {
     private double percentualeCacao;
 
     public Cioccolato(String tipoCioccolato, double percentualeCacao){
-        super();
         this.tipoCioccolato = tipoCioccolato;
         this.percentualeCacao = percentualeCacao;
     }
     
     public void prpoduce(){
         System.out.println("tipo di cioccolato: "+ tipoCioccolato);
-        System.out.println();
-        System.out.println("percentuale di cacao: "+ percentualeCacao);
+        System.out.println("percentuale di cacao: "+ percentualeCacao +"%");
     }
 
+
+    // metodi abstract
     public abstract int getQuantitaCioccolato();
     public abstract double getCosto();
 
+
+
+    // getter e setter
     public String getTipoCioccolato() {
         return tipoCioccolato;
     }
