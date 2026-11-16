@@ -1,0 +1,10 @@
+questo progetto simula una fabbrica di cioccolato che deve produrre cioccolatini ,tavolette di cioccolato e cioccolato caldo.
+
+
+- calsse Main 
+
+- classe base Cioccolato
+
+- classe derivata Cioccolatino
+- classe derivata Tavoletta
+- classe derivata CioccolatoCaldo
