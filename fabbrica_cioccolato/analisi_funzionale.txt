@@ -1,6 +1,8 @@
 questo progetto simula una fabbrica di cioccolato che deve produrre cioccolatini ,tavolette di cioccolato e cioccolato caldo.
 
 
+# COMMIT 1
+DIVISIONE CLASSI E IMPOSTAZIONE INIZIALE
 - calsse Main 
 
 - classe base Cioccolato
@@ -8,3 +10,11 @@ questo progetto simula una fabbrica di cioccolato che deve produrre cioccolatini
 - classe derivata Cioccolatino
 - classe derivata Tavoletta
 - classe derivata CioccolatoCaldo
+
+# COMMIT 2 
+
+AGGIORNAMENTO CODICE 
+
+- aggiunta costruttori
+- aggiunta getter e setter
+- modifiche varie sparse
