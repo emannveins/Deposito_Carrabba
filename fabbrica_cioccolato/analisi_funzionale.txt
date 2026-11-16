@@ -18,3 +18,10 @@ AGGIORNAMENTO CODICE
 - aggiunta costruttori
 - aggiunta getter e setter
 - modifiche varie sparse
+
+
+# COMMIT 3 
+
+AGGIUNTA CLASSE fabbrica
+- costi aggiunti in ogni classe derivata
+- classe base modificata in abstract

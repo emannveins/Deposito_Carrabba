@@ -3,7 +3,8 @@ public class CioccolatoCaldo extends Cioccolato {
     private double temperatura;
     private double densita;
     private double cioccolatoUsato;
-
+    private int costo = 20;
+    
     public CioccolatoCaldo() {
         super();
     }

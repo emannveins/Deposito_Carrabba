@@ -2,6 +2,7 @@ public class Tavoletta extends Cioccolato{
     private double peso;
     private boolean aggiunte;
     private int numeroCioccolatini;
+    private int costo = 20;
 
     public Tavoletta() {
         super();

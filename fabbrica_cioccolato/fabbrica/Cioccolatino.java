@@ -1,6 +1,7 @@
 public class Cioccolatino extends Cioccolato{
     private String forma;
     private String ripieno;
+    private int costo = 2;
     private int calcolo;
 
     public Cioccolatino(){
