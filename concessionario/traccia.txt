@@ -1,0 +1,551 @@
+TRACCIA DELL'ESERCITAZIONE
+1. Descrizione del progetto
+Una società automobilistica internazionale intende realizzare un'applicazione backend per gestire la propria rete commerciale, 
+costituita da diverse Case Madri, concessionari autorizzati e clienti.
+L'applicazione dovrà consentire di gestire le informazioni relative alle Case Madri, 
+ai concessionari appartenenti alla rete commerciale e ai clienti registrati presso i singoli concessionari.
+Ogni Casa Madre può possedere diversi concessionari distribuiti sul territorio nazionale e internazionale.
+Ogni concessionario appartiene a una sola Casa Madre e può gestire numerosi clienti.
+Ogni cliente deve essere associato a un solo concessionario di riferimento.
+Il sistema dovrà permettere di effettuare operazioni di inserimento, modifica, eliminazione e consultazione dei dati, 
+oltre a ricerche specifiche che coinvolgano più entità contemporaneamente.
+
+
+
+
+
+
+
+
+3. Analisi del database
+Il database dovrà chiamarsi:
+
+gestione_concessionari
+
+Dovranno essere create tre tabelle principali:
+- CASA_MADRE
+- CONCESSIONARIO
+- CLIENTE
+
+3.1 Tabella CASA_MADRE
+La tabella rappresenta le aziende automobilistiche proprietarie delle reti di concessionari.
+Campo	Tipo MySQL	Vincoli
+id	BIGINT	Primary Key, Auto Increment (Long)
+ragione_sociale	VARCHAR(100)	Not Null (String)
+sede_legale	VARCHAR(100)	Not Null  (String)
+paese	VARCHAR(50)	Not Null (String)
+anno_fondazione	INT	 (Integer)
+fatturato_annuo	DECIMAL(15,2)	(BigDecimal)
+
+Ogni Casa Madre dovrà avere un identificativo univoco e una ragione sociale.
+3.2 Tabella CONCESSIONARIO
+La tabella rappresenta i concessionari appartenenti alle Case Madri.
+Campo	Tipo MySQL	Vincoli
+id	BIGINT	Primary Key, Auto Increment
+nome	VARCHAR(100)	Not Null
+citta	VARCHAR(100)	Not Null
+indirizzo	VARCHAR(150)	
+telefono	VARCHAR(20)	
+fatturato	DECIMAL(15,2)	
+casa_madre_id	BIGINT	Foreign Key
+
+Il campo casa_madre_id dovrà contenere il riferimento alla Casa Madre di appartenenza.
+3.3 Tabella CLIENTE
+La tabella rappresenta i clienti registrati presso i concessionari.
+Campo	Tipo MySQL	Vincoli
+id	BIGINT	Primary Key, Auto Increment 
+nome	VARCHAR(50)	Not Null
+cognome	VARCHAR(50)	Not Null
+email	VARCHAR(100)	Unique
+telefono	VARCHAR(20)	
+data_registrazione	Timestamp default current_timestamp (LocaldateTime)	
+concessionario_id	BIGINT	Foreign Key
+
+Il campo concessionario_id dovrà contenere il riferimento al concessionario presso il quale il cliente è registrato.
+
+
+
+
+
+
+
+
+4. Relazioni tra le entità
+Le relazioni da implementare sono le seguenti:
+
+CasaMadre – Concessionario
+- Una Casa Madre può avere uno o più concessionari.
+- Ogni concessionario deve appartenere a una sola Casa Madre.
+- La relazione dovrà essere bidirezionale.
+Concessionario – Cliente
+- Un concessionario può gestire uno o più clienti.
+- Ogni cliente deve essere associato a un solo concessionario.
+- La relazione dovrà essere bidirezionale.
+Lo studente dovrà utilizzare le annotazioni JPA appropriate per realizzare le relazioni.
+
+Dovrà inoltre individuare il lato proprietario della relazione e il lato inverso, utilizzando correttamente mappedBy.
+
+Dovrà essere prestata particolare attenzione alla serializzazione JSON delle relazioni bidirezionali, evitando problemi di ricorsione infinita.
+
+5. Configurazione del progetto Spring Boot
+
+Configurare il file application.yml per consentire il collegamento al database MySQL.
+Configurare inoltre Hibernate affinché possa generare o aggiornare la struttura delle tabelle sulla base delle entità JPA.
+
+
+
+
+
+
+
+
+6. Prima fase – Implementazione delle entità
+Creare le seguenti classi all'interno del package entity:
+- CasaMadre
+- Concessionario
+- Cliente
+Per ogni entità dovranno essere rispettati i seguenti requisiti:
+1. Utilizzare @Entity.
+2. Definire il nome della tabella con @Table.
+3. Definire la chiave primaria con @Id.
+4. Utilizzare @GeneratedValue.
+5. Mappare correttamente tutti gli attributi.
+6. Definire le relazioni tra le entità.
+7. Utilizzare @Column per specificare eventuali vincoli.
+8. Definire opportunamente la strategia di caricamento delle relazioni.
+Vincolo: non dovranno essere create tabelle aggiuntive per rappresentare le relazioni, in quanto si tratta di relazioni uno-a-molti e molti-a-uno.
+7. Seconda fase – Implementazione dei Repository
+Creare tre interfacce Repository:
+- CasaMadreRepository
+- ConcessionarioRepository
+- ClienteRepository
+Tutte dovranno estendere JpaRepository, specificando il tipo dell'entità gestita e il tipo della relativa chiave primaria.
+
+I Repository dovranno contenere sia i metodi standard ereditati da JpaRepository sia i metodi personalizzati richiesti nelle fasi successive.
+
+
+
+
+
+
+
+
+
+
+
+
+
+8. Terza fase – Implementazione delle API CRUD
+Per ogni entità dovrà essere realizzato un Controller REST e un relativo Service.
+
+I Controller dovranno esporre gli endpoint necessari per effettuare tutte le operazioni CRUD.
+
+
+8.1 CRUD Casa Madre
+Realizzare le seguenti API:
+Metodo	Endpoint	Descrizione
+POST	/api/case-madri	Inserimento nuova Casa Madre
+GET	/api/case-madri	Recupero di tutte le Case Madri
+GET	/api/case-madri/{id}	Recupero Casa Madre per ID
+PUT	/api/case-madri/{id}	Modifica Casa Madre
+DELETE	/api/case-madri/{id}	Eliminazione Casa Madre
+
+Requisiti:
+- L'inserimento dovrà verificare che i dati obbligatori siano presenti.
+- La modifica dovrà verificare che la Casa Madre esista.
+- L'eliminazione dovrà verificare che non siano presenti concessionari associati.
+8.2 CRUD Concessionario
+Realizzare le seguenti API:
+Metodo	Endpoint	Descrizione
+POST	/api/concessionari	Inserimento nuovo concessionario
+GET	/api/concessionari	Recupero di tutti i concessionari
+GET	/api/concessionari/{id}	Recupero concessionario per ID
+PUT	/api/concessionari/{id}	Modifica concessionario
+DELETE	/api/concessionari/{id}	Eliminazione concessionario
+
+Requisiti:
+- Ogni concessionario dovrà essere associato a una Casa Madre esistente.
+- In fase di inserimento dovrà essere verificata l'esistenza della Casa Madre indicata.
+- In fase di modifica sarà possibile cambiare la Casa Madre di appartenenza.
+- L'eliminazione dovrà essere impedita se sono presenti clienti associati.
+8.3 CRUD Cliente
+Realizzare le seguenti API:
+Metodo	Endpoint	Descrizione
+POST	/api/clienti	Inserimento nuovo cliente
+GET	/api/clienti	Recupero di tutti i clienti
+GET	/api/clienti/{id}	Recupero cliente per ID
+PUT	/api/clienti/{id}	Modifica cliente
+DELETE	/api/clienti/{id}	Eliminazione cliente
+
+Requisiti:
+- Ogni cliente dovrà essere associato a un concessionario esistente.
+- L'email dovrà essere univoca.
+- La data di registrazione dovrà essere valorizzata.
+- Dovrà essere possibile modificare il concessionario di riferimento.
+- Dovrà essere possibile eliminare un cliente senza eliminare il concessionario associato.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9. Quarta fase – Query personalizzate con Name Convention
+Implementare all'interno dei Repository le seguenti query utilizzando esclusivamente la convenzione di denominazione dei metodi Spring Data JPA.
+
+Non utilizzare @Query in questa fase.
+9.1 ClienteRepository
+Esercizio 1
+
+Realizzare un metodo che permetta di recuperare tutti i clienti aventi un determinato nome.
+
+Esercizio 2
+
+Realizzare un metodo che permetta di recuperare tutti i clienti aventi un determinato cognome.
+
+Esercizio 3
+
+Realizzare un metodo che permetta di recuperare un cliente attraverso il proprio indirizzo email.
+Esercizio 9
+
+Realizzare un metodo che permetta di recuperare i clienti aventi contemporaneamente un determinato nome e cognome.
+9.2 ConcessionarioRepository
+Esercizio 10
+
+Realizzare un metodo che permetta di recuperare tutti i concessionari appartenenti a una determinata città.
+
+Esercizio 11
+
+Realizzare un metodo che permetta di recuperare tutti i concessionari con fatturato superiore a un determinato importo.
+
+Esercizio 13
+
+Realizzare un metodo che permetta di recuperare tutti i concessionari con fatturato compreso tra due importi.
+
+9.3 CasaMadreRepository
+Esercizio 17
+
+Realizzare un metodo che permetta di recuperare una Casa Madre attraverso la propria ragione sociale.
+
+Esercizio 18
+
+Realizzare un metodo che permetta di recuperare tutte le Case Madri appartenenti a un determinato paese.
+
+Esercizio 20
+
+Realizzare un metodo che permetta di recuperare tutte le Case Madri fondate prima di un determinato anno.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+10. Quinta fase – Query personalizzate tramite @Query e JPQL
+In questa fase gli studenti dovranno realizzare interrogazioni personalizzate utilizzando l'annotazione @Query.
+
+Le query dovranno essere scritte in JPQL, facendo riferimento alle entità e agli attributi Java.
+
+Non è consentito utilizzare query SQL native tramite nativeQuery = true.
+10.1 Query con relazioni tra entità
+Esercizio 23 – Clienti per concessionario
+
+Realizzare una query che restituisca tutti i clienti associati a un determinato concessionario.
+
+La ricerca dovrà avvenire attraverso l'identificativo del concessionario.
+
+Esercizio 24 – Concessionari per Casa Madre
+
+Realizzare una query che restituisca tutti i concessionari appartenenti a una determinata Casa Madre.
+
+La ricerca dovrà essere effettuata utilizzando la ragione sociale della Casa Madre.
+
+Esercizio 25 – Clienti per Casa Madre
+
+Realizzare una query che restituisca tutti i clienti appartenenti indirettamente a una determinata Casa Madre.
+
+La ricerca dovrà attraversare la relazione tra Cliente, Concessionario e Casa Madre.
+
+Esercizio 26 – Clienti per città del concessionario
+
+Realizzare una query che restituisca tutti i clienti associati a concessionari situati in una determinata città.
+
+Esercizio 27 – Clienti per paese della Casa Madre
+
+Realizzare una query che restituisca tutti i clienti associati a concessionari appartenenti a Case Madri situate in un determinato paese.
+10.2 Query con condizioni multiple
+Esercizio 28 – Ricerca dinamica clienti
+
+Realizzare una query che permetta di cercare i clienti attraverso nome e cognome.
+
+Entrambi i parametri dovranno essere opzionali.
+
+Se viene valorizzato solamente il nome, la ricerca dovrà utilizzare solamente il nome.
+
+Se viene valorizzato solamente il cognome, la ricerca dovrà utilizzare solamente il cognome.
+
+Se entrambi i parametri vengono valorizzati, la ricerca dovrà utilizzare entrambe le condizioni.
+
+Esercizio 29 – Ricerca concessionari per città e fatturato
+
+Realizzare una query che recuperi tutti i concessionari appartenenti a una determinata città e aventi un fatturato compreso tra due valori.
+
+Esercizio 30 – Ricerca Case Madri per paese e fatturato
+
+Realizzare una query che recuperi tutte le Case Madri appartenenti a un determinato paese e aventi fatturato annuo superiore a un importo specificato.
+10.3 Query con funzioni aggregate
+Esercizio 31 – Numero di concessionari per Casa Madre
+
+Realizzare una query che restituisca, per ogni Casa Madre, il numero totale di concessionari associati.
+
+La query dovrà utilizzare:
+- COUNT
+@Query("""
+    SELECT COUNT(c)
+    FROM Cliente c
+""")
+Long countClienti();
+
+
+- GROUP BY
+
+@Query("""
+    SELECT c.citta
+    FROM Concessionario c
+    GROUP BY c.citta
+""")
+List<String> findCittaConcessionari();
+
+- LEFT JOIN
+
+@Query("""
+    SELECT cl
+    FROM Cliente cl
+    JOIN cl.concessionario c
+    WHERE c.id = :id
+""")
+List<Cliente> findClientiByConcessionarioId(
+    @Param("id") Long id);
+
+
+
+Il risultato dovrà includere anche le Case Madri che non possiedono concessionari.
+
+Esercizio 32 – Numero di clienti per concessionario
+
+Realizzare una query che restituisca, per ogni concessionario, il numero totale di clienti associati.
+
+Anche in questo caso dovranno essere inclusi i concessionari che non hanno clienti.
+
+Esercizio 33 – Fatturato complessivo per Casa Madre
+
+Realizzare una query che calcoli il fatturato complessivo generato da tutti i concessionari appartenenti a ciascuna Casa Madre.
+
+La query dovrà utilizzare la funzione SUM.
+
+Esercizio 34 – Fatturato medio dei concessionari
+
+Realizzare una query che calcoli il fatturato medio di tutti i concessionari presenti nel database.
+
+Esercizio 35 – Numero totale di clienti per Casa Madre
+
+Realizzare una query che restituisca per ogni Casa Madre il numero complessivo di clienti registrati presso tutti i suoi concessionari.
+10.4 Query con sottoquery
+Esercizio 36 – Concessionari sopra la media
+
+Realizzare una query che recuperi tutti i concessionari il cui fatturato è superiore al fatturato medio di tutti i concessionari.
+
+La query dovrà utilizzare una sottoquery con la funzione AVG.
+
+Esercizio 37 – Case Madri con fatturato superiore alla media
+
+Realizzare una query che recuperi tutte le Case Madri aventi un fatturato annuo superiore al fatturato medio delle Case Madri presenti nel database.
+
+Esercizio 38 – Concessionari con almeno un cliente
+
+Realizzare una query che recuperi solamente i concessionari per i quali risulta registrato almeno un cliente.
+
+La query dovrà utilizzare una condizione di esistenza oppure un'opportuna aggregazione.
+
+Esercizio 39 – Case Madri senza concessionari
+
+Realizzare una query che recuperi tutte le Case Madri che non possiedono concessionari associati.
+
+Esercizio 40 – Concessionari con più clienti della media
+
+Realizzare una query che individui i concessionari il cui numero di clienti associati è superiore al numero medio di clienti per concessionario.
+
+La query dovrà utilizzare una sottoquery e un'aggregazione.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+11. Sesta fase – Esposizione delle query tramite API REST
+Tutte le query realizzate dovranno essere richiamabili attraverso endpoint REST.
+
+Gli studenti dovranno creare i metodi nei rispettivi Service e successivamente esporli attraverso i Controller.
+Metodo	Endpoint	Funzionalità
+GET	/api/clienti/concessionario/{id}	Clienti di un concessionario
+GET	/api/clienti/casa-madre/{id}	Clienti di una Casa Madre
+GET	/api/clienti/citta/{citta}	Clienti per città
+GET	/api/clienti/paese/{paese}	Clienti per paese della Casa Madre
+GET	/api/clienti/search	Ricerca dinamica clienti
+GET	/api/concessionari/casa-madre/{ragioneSociale}	Concessionari per Casa Madre
+GET	/api/concessionari/fatturato	Concessionari per intervallo di fatturato
+GET	/api/concessionari/sopra-media	Concessionari sopra la media
+GET	/api/concessionari/con-clienti	Concessionari con almeno un cliente
+GET	/api/concessionari/statistiche/clienti	Numero clienti per concessionario
+GET	/api/concessionari/statistiche/sopra-media-clienti	Concessionari sopra la media clienti
+GET	/api/case-madri/statistiche/concessionari	Numero concessionari per Casa Madre
+GET	/api/case-madri/statistiche/clienti	Numero clienti per Casa Madre
+GET	/api/case-madri/statistiche/fatturato	Fatturato totale per Casa Madre
+GET	/api/case-madri/senza-concessionari	Case Madri senza concessionari
+GET	/api/case-madri/sopra-media	Case Madri sopra la media
+
+Per le API che richiedono più parametri, utilizzare i Query Parameters.
+
+Esempi di richieste:
+GET /api/clienti/search?nome=Mario&cognome=Rossi
+
+
+GET /api/concessionari/fatturato?min=100000&max=900000
+
+
+GET /api/case-madri/statistiche/fatturato
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+12. Settima fase – DTO e gestione delle risposte
+Per evitare di esporre direttamente le entità JPA, implementare una struttura DTO.
+
+Creare le seguenti classi:
+
+ClienteResponseDTO
+Campo	Descrizione
+id	Identificativo cliente
+nome	Nome cliente
+cognome	Cognome cliente
+email	Email cliente
+concessionarioNome	Nome concessionario
+concessionarioCitta	Città concessionario
+casaMadreNome	Ragione sociale Casa Madre
+
+ConcessionarioResponseDTO
+Campo	Descrizione
+id	Identificativo concessionario
+nome	Nome concessionario
+citta	Città
+fatturato	Fatturato
+casaMadreNome	Ragione sociale Casa Madre
+numeroClienti	Numero clienti associati
+
+CasaMadreResponseDTO
+Campo	Descrizione
+id	Identificativo Casa Madre
+ragioneSociale	Ragione sociale
+paese	Paese
+fatturatoAnnuo	Fatturato annuo
+numeroConcessionari	Numero concessionari
+fatturatoTotaleConcessionari	Somma fatturato concessionari
+
+Lo studente dovrà realizzare la conversione delle entità in DTO attraverso un apposito componente o servizio di mapping.
+
+Per le query aggregate dovrà inoltre sperimentare:
+- Proiezioni tramite interfacce.
+- DTO utilizzando SELECT NEW in JPQL.
+
+
+
+
+
+
+
+
+13. Ottava fase – Gestione delle eccezioni e validazione
+Implementare una gestione centralizzata delle eccezioni attraverso @RestControllerAdvice.
+
+
+
+
+
+
+15. Nona fase – Test delle API tramite Postman
+Dopo aver completato l'implementazione, testare tutte le API attraverso Postman.
+
+16. Dati iniziali per il popolamento del database
+Per verificare le query, inserire i seguenti dati.
+Case Madri
+ID	Ragione sociale	Sede legale	Paese	Anno fondazione	Fatturato annuo
+1	Auto Italia Group	Roma	Italia	1950	5000000
+2	Global Motors	Berlino	Germania	1970	8500000
+3	Japan Automotive	Tokyo	Giappone	1960	7200000
+4	Electric Mobility	New York	USA	2010	3000000
+
+Concessionari
+ID	Nome	Città	Fatturato	Casa Madre
+1	Auto Roma	Roma	500000	1
+2	Auto Milano	Milano	750000	1
+3	Motors Berlin	Berlino	900000	2
+4	Motors Monaco	Monaco	600000	2
+5	Tokyo Cars	Tokyo	800000	3
+6	Tokyo Motors	Osaka	400000	3
+
+Clienti
+ID	Nome	Cognome	Email	Concessionario
+1	Mario	Rossi	mario@email.it	1
+2	Luca	Bianchi	luca@email.it	1
+3	Anna	Verdi	anna@email.it	2
+4	Paolo	Neri	paolo@email.it	3
+5	Giulia	Gialli	giulia@email.it	3
+6	Marco	Blu	marco@email.it	4
+7	Sara	Rosa	sara@email.it	5
+8	Andrea	Rossi	andrea@email.it	5
+9	Francesca	Bianchi	francesca@email.it	6
+
+Nota: la Casa Madre con ID 4 non possiede concessionari. Alcuni concessionari non hanno clienti.
+ Queste situazioni sono intenzionali e dovranno essere utilizzate per verificare le query con LEFT JOIN, COUNT e le ricerche delle entità senza associazioni.
